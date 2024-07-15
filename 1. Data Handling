@@ -3,7 +3,7 @@ import os
 import time
 
 def process_excel_file():
-    
+
     start_time = time.time()  # Start the timer
 
     # Define the input path and output path
@@ -16,24 +16,19 @@ def process_excel_file():
     # Remove the first row
     DF_CLN = APMC.iloc[1:].reset_index(drop=True)
 
-    # Trim spaces from the cells in the second column
-    if DF_CLN.shape[1] > 1:  # Check if there is more than one column
-        DF_CLN.iloc[:, 1] = DF_CLN.iloc[:, 1].str.strip()  # Trim spaces in the second column
+    # Trim spaces from all data
+    DF_CLN = DF_CLN.applymap(lambda x: x.strip() if isinstance(x, str) else x)
 
-    # Remove all rows where the second column is blank
-    if DF_CLN.shape[1] > 1:  # Check if there is more than one column
-        DF_CLN = DF_CLN.dropna(subset=[DF_CLN.columns[1]])
-        DF_CLN = DF_CLN[DF_CLN.iloc[:, 1].notna()] 
+    # Remove all completely blank rows
+    DF_CLN.dropna(how='all', inplace=True)
 
     # Save the cleaned DataFrame to a new Excel file
-   # DF_CLN.to_excel(output_path, index=False)
+    DF_CLN.to_excel(output_path, index=False)
 
     # Print success message and runtime
-    #end_time = time.time()  # End the timer
-    #runtime = end_time - start_time
-    print(DF_CLN)
-    #print(f"Successfully completed. Runtime: {runtime:.2f} seconds")
+    end_time = time.time()  # End the timer
+    runtime = end_time - start_time
+    print(f"Successfully completed. Runtime: {runtime:.2f} seconds")
 
 # Call the function to process the Excel file
 process_excel_file()
-
